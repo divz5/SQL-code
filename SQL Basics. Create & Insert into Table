@@ -1,33 +1,82 @@
 #MySQl Code 
 
-Table 1 Query:
-Create Table Employee
-(EmpID int,           #Employee ID
-FName varchar(50),    # First Name
-LName varchar(50),    # Last Name
-Age int, 
-Gender varchar(50)
-)
+# Create TheOffice Database
+DROP DATABASE IF EXISTS TheOffice;
+CREATE DATABASE TheOffice; 
+USE TheOffice;
 
-Table 2 Query:
-Create Table Salary 
-(EmpID int, 
-JobTitle varchar(50), 
-Salary int
-)
 
-Table 1 Insert:
-Insert into Employee VALUES
-(1001, 'Jim', 'Halpert', 30, 'Male'),
-(1002, 'Pam', 'Beasley', 30, 'Female'),
-(1003, 'Dwight', 'Schrute', 29, 'Male'),
-(1004, 'Angela', 'Martin', 31, 'Female'),
-(1005, 'Toby', 'Flenderson', 32, 'Male');
+# Create an Employees Table
+CREATE TABLE Employees(
+    employee_id INT NOT NULL PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    age INT,
+    gender VARCHAR(50),
+    salary INT, 
+    job_title VARCHAR(50),
+    date_of_joining DATE 
+);
 
-Table 2 Insert:
-Insert Into Salary VALUES
-(1001, 'Salesman', 45000),
-(1002, 'Receptionist', 36000),
-(1003, 'Salesman', 63000),
-(1004, 'Accountant', 47000),
-(1005, 'HR', 50000);
+# Create a Clients table
+CREATE TABLE Clients(
+    client_id INT NOT NULL PRIMARY KEY,
+    client_name VARCHAR(50),
+    client_city VARCHAR(50), 
+    sales_rep_id INT,
+    FOREIGN KEY (sales_rep_id) REFERENCES Employees (employee_id) 
+    ON DELETE SET NULL
+);
+
+# Create a Sales table
+CREATE TABLE Sales(
+    order_number INT NOT NULL PRIMARY KEY,
+    client_id INT, 
+    sale_amount DECIMAL(20,2),
+    quantity INT,
+    employee_id INT,
+    FOREIGN KEY (client_id) REFERENCES Clients (client_id) 
+    ON DELETE SET NULL, 
+    FOREIGN KEY (employee_id) REFERENCES Employees (employee_id) 
+    ON DELETE SET NULL
+);
+
+
+# Insert values into Employees table
+INSERT INTO Employees VALUES
+(1000, 'Michael', 'Scott', 36, 'Male', 76000, 'Manager', '1995-01-16'),
+(1001, 'Jim', 'Halpert', 30, 'Male', 45000, 'Salesman', '1998-06-03'),
+(1002, 'Pam', 'Beasley', 30, 'Female', 36000, 'Receptionist', '1999-08-03'),
+(1003, 'Dwight', 'Schrute', 29, 'Male', 63000, 'Salesman', '1998-06-08'),
+(1004, 'Angela', 'Martin', 31, 'Female', 47000, 'Accountant', '1999-05-02’),
+(1005, 'Toby', 'Flenderson', 32, 'Male',50000,'HR','2000-03-01'),
+(1006, 'Stanley', 'Hudson', 38, 'Male',40000,'Salesman', '2001-04-01'),
+(1007, 'Kevin', 'Malone', 31, 'Male',30000,'Accountant', '2002-07-03'),
+(1008, 'Oscar', 'Martinez', 48, 'Male',60000, 'Accountant','2002-02-15'),
+(1009, 'Phyllis','Vance', 55, 'Female',30000,'Salesman','2001-07-18');
+
+# Viewing data in Employees table
+SELECT * FROM Employees;
+
+# Insert values into Client table
+INSERT INTO Clients VALUES
+(300,'Scranton Whitepages','Scranton',1001),
+(301,'Scranton Times','Scranton',1003),
+(302,'John Smith Law','Harrisburg',1006),
+(303,'Athlead','Pittsburgh',1003),
+(304,'FedEx','Scranton',1001);
+
+# Viewing data in Client table
+SELECT * FROM Clients;
+
+# Insert values into Sales table
+INSERT INTO Sales VALUES
+(100,750.50,500,301,1003),
+(101,900.75,900,300,1001),
+(102,135.50,100,304,1001),
+(103,700.90,450,302,1006),
+(104,200.40,150,303,1003),
+(105,130.50,100,300,1001);
+
+# Viewing data in Sales table
+SELECT * FROM Sales; 
