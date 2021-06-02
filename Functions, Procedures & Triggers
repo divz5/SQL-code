@@ -1,0 +1,75 @@
+# Create a function to get a Client's ID when the name of the Client is entered. 
+
+DELIMITER //
+DROP FUNCTION IF EXISTS get_client_id//
+CREATE FUNCTION get_client_id (client_name_param VARCHAR(50))
+RETURNS INT
+BEGIN
+    DECLARE client_id_var INT; 
+    SELECT client_id
+    INTO client_id_var
+    FROM Clients 
+    WHERE client_name = client_name_param; 
+    RETURN(client_id_var); 
+END//
+DELIMITER ;
+
+# Test the function
+
+SELECT sales_rep_id
+FROM Clients 
+WHERE client_id = get_client_id('FedEx’); 
+
+# Create a Procedure to get the Max sale, Min sale and Avg Sale of an Employee when an Employee ID is entered. 
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS employee_sales_summary//
+CREATE PROCEDURE employee_sales_summary (employee_id_param INT)
+BEGIN 
+    DECLARE max_sale_amount DECIMAL(20,2); 
+    DECLARE min_sale_amount DECIMAL(20,2);
+    DECLARE avg_sale_amount DECIMAL(20,2);
+    SELECT MAX(sale_amount), MIN(sale_amount), ROUND(AVG(sale_amount), 2)
+    INTO max_sale_amount, min_sale_amount, avg_sale_amount
+    FROM Sales 
+    WHERE employee_id = employee_id_param; 
+    SELECT CONCAT('$', max_sale_amount) AS 'Maximum Sale’, CONCAT('$', min_sale_amount) 
+    AS 'Minimum Sale’, CONCAT('$', avg_sale_amount) AS 'Average Sale'; 
+END//
+DELIMITER ;
+
+# Test the Procedure
+
+CALL employee_sales_summary(1001);
+
+# Create a Trigger for an insert action and a delete action into a New table (Audit) with time & date
+ 
+-- Insert Trigger 
+
+DELIMITER //
+CREATE TRIGGER sales_after_insert
+    AFTER INSERT ON Sales
+    FOR EACH ROW
+BEGIN 
+    INSERT INTO sales_audit VALUES (NEW.order_number, NEW.sale_amount, 'INSERTED', NOW()); 
+END//
+
+
+-- Delete Trigger
+
+CREATE TRIGGER sales_after_delete
+    AFTER DELETE ON Sales
+    FOR EACH ROW
+BEGIN 
+    INSERT INTO sales_audit VALUES (OLD.order_number, OLD.sale_amount, 'DELETED', NOW()); 
+END//
+DELIMITER ;
+
+# Test the Trigger
+
+INSERT INTO Sales VALUES (106, 302, 400.00, 200, 1001);
+
+DELETE FROM Sales WHERE order_number = 106;  
+
+# Viewing the changes made to Audit table
+SELECT * FROM sales_audit; 
