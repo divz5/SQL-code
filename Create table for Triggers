@@ -1,0 +1,7 @@
+# Create a Sales Audit table
+
+CREATE TABLE sales_audit
+(order_number INT NOT NULL,
+sale_amount DECIMAL(20,2) NOT NULL,
+action_type VARCHAR(50) NOT NULL, 
+action_date DATETIME NOT NULL); 
