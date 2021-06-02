@@ -1,0 +1,44 @@
+# What is the average salary for each job title? 
+
+SELECT job_title AS 'JobTitle’, 
+CONCAT('$', ROUND(AVG(salary))) AS 'AverageSalary'
+FROM Employees
+GROUP BY job_title
+ORDER BY AverageSalary DESC; 
+
+# What is the name and sales amount of the employee with the highest total sales? 
+
+SELECT CONCAT(Employees.first_name, ' ', Employees.last_name) AS FullName, SUM(Sales.sale_amount) AS TotalSales
+FROM Employees
+JOIN Sales 
+    ON Employees.employee_id = Sales.employee_id
+GROUP BY FullName
+ORDER BY TotalSales DESC
+LIMIT 1; 
+
+# How much has each client spent? 
+
+SELECT Clients.client_name, SUM(Sales.sale_amount) AS TotalSales
+FROM Clients
+JOIN Sales
+    ON Clients.client_id = Sales.client_id
+GROUP BY client_name
+ORDER BY TotalSales DESC;
+
+# Find the total sales for each client and the name of their sales representative.  
+
+SELECT CONCAT(Employees.first_name, ' ', Employees.last_name) AS SalesRep, Clients.client_name AS ClientName, SUM(Sales.sale_amount) AS TotalSales
+FROM Employees
+JOIN Clients
+    ON Employees.employee_id = Clients.sales_rep_id
+JOIN Sales
+    ON Clients.client_id = Sales.client_id
+GROUP BY SalesRep, ClientName
+ORDER BY TotalSales DESC;
+
+# What is the average salary for each gender? 
+
+SELECT gender, CONCAT('$', ROUND(AVG(salary))) AS 'AverageSalary'
+FROM Employees
+GROUP BY gender
+ORDER BY AverageSalary DESC; 
